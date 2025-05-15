@@ -21,6 +21,7 @@ COinCO is a large-scale dataset derived from COCO, featuring 97,722 images with 
 3. **Context-empowered fake localization**
 
 ---
+> 📦 **Dataset Download**: You can download the COinCO dataset from [Hugging Face](https://huggingface.co/datasets/ytz009/COinCO)
 
 ##  📁 Repository Structure
 ```text
@@ -55,17 +56,42 @@ Alternatively, you can use pip:
 ```bash
 pip install -r requirements.txt
 ```
+---
 ## 📦 Data Usage
-The task_data/ directory contains data required by the three downstream tasks.
 
-All required preprocessed data is located in the task_data/ folder at the root level.
+The `task_data/` directory contains all necessary **preprocessed data** for the three downstream tasks in our project.
 
-You do not need to modify the dataset manually.
+### 🔗 Download Instructions
+
+You can download the required files from our Hugging Face repository:
+
+👉 **[Download link](https://huggingface.co/datasets/ytz009/COinCO-resources)**
+
+Once downloaded, follow these steps to reconstruct and use the dataset:
+
+```bash
+# Step 1: Concatenate all parts into a single zip file
+cat task_data_part_* > task_data.zip
+
+# Step 2: Unzip the archive
+unzip task_data.zip
+```
+
+This will create a folder named `task_data/`.
+
+### 📁 Contents of `task_data/`
+
+The `task_data/` folder includes:
+
+- All preprocessed data required to run the code
+- Baseline prediction results for the fake localization task (used for context enhancement)
+
+These data files are derived from both the official [COinCO dataset](https://huggingface.co/datasets/ytz009/COinCO) and the original COCO dataset, and have been fully prepared to support out-of-the-box execution of our code.
 
 ---
 ## 🧩 Pretrained Checkpoints
 
-This folder contains all pretrained models required for running our experiments.
+The following contains all pretrained models required for running our experiments.
 
 ---
 
@@ -75,7 +101,7 @@ These external models are required for embedding extraction and context reasonin
 
 - **[Stable Diffusion 2.1 VAE](https://huggingface.co/stabilityai/stable-diffusion-2-1)** – for extracting image and mask latents.
 - **[BERT Base Uncased](https://huggingface.co/bert-base-uncased)** – for encoding semantic information.
-- **[Molmo-7B-D-0924](https://huggingface.co/allenai/Molmo-7B-D-0924)** – for multimodal reasoning during context verification.
+- **[Molmo-7B-D-0924](https://huggingface.co/allenai/Molmo-7B-D-0924)** – for multimodal reasoning during context prediction.
 
 ---
 
@@ -90,7 +116,13 @@ checkpoints/
 ```
 
 All checkpoints are bundled and available for download as a single archive:  
-👉 **Download link (to be added):** `https://huggingface.co/your-username/COinCO_checkpoints.zip`
+👉 **[Download link](https://huggingface.co/datasets/ytz009/COinCO-resources)** 
+
+After downloading the `checkpoints.zip` from Hugging Face
+```bash
+unzip checkpoints.zip
+```
+and replace the `checkpoints/` folder
 
 ---
 
