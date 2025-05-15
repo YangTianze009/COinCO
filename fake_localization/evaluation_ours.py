@@ -10,7 +10,7 @@ import pandas as pd
 import argparse
 
 class FakeDetectionEvaluator:
-    def __init__(self, methods, base_pred_path, gt_path, context_data_path, out_of_context_path, all_masks_path, enhancement_factor=1.3):
+    def __init__(self, methods, base_pred_path, gt_path, out_of_context_path, all_masks_path, enhancement_factor=1.3):
         """
         Initialize the evaluator
         Args:
@@ -32,7 +32,6 @@ class FakeDetectionEvaluator:
         }
         
         # Load context data and out-of-context objects data
-        self.context_data = pd.read_csv(context_data_path)
         self.out_of_context_data = pd.read_csv(out_of_context_path)
         self.all_masks_path = all_masks_path
         
@@ -105,26 +104,20 @@ class FakeDetectionEvaluator:
         try:
             # Get coco_index from image name
             coco_index = int(os.path.splitext(img_name)[0])
-            # Check if this index exists in context data and has label 1
-            context_row = self.context_data[self.context_data['coco_index'] == coco_index]
 
-            ## Need more discussion
-            # if not context_row.empty and context_row['label'].iloc[0] == 1:
-            if not context_row.empty:
-                # Get out-of-context objects
-                object_names = self.get_out_of_context_objects(coco_index)
-                if object_names:
-                    # Get combined mask for all objects
-                    combined_mask = self.get_combined_mask(coco_index, object_names)
-                    
-                    if combined_mask is not None:
-                        # Apply enhancement to the combined mask area
-                        enhanced_pred = pred.copy()
-                        enhanced_pred[combined_mask] = np.minimum(
-                            enhanced_pred[combined_mask] * self.enhancement_factor,
-                            1.0
-                        )
-                        return enhanced_pred
+            object_names = self.get_out_of_context_objects(coco_index)
+            if object_names:
+                # Get combined mask for all objects
+                combined_mask = self.get_combined_mask(coco_index, object_names)
+                
+                if combined_mask is not None:
+                    # Apply enhancement to the combined mask area
+                    enhanced_pred = pred.copy()
+                    enhanced_pred[combined_mask] = np.minimum(
+                        enhanced_pred[combined_mask] * self.enhancement_factor,
+                        1.0
+                    )
+                    return enhanced_pred
             
             return pred
             
@@ -331,7 +324,6 @@ if __name__ == "__main__":
 
     base_pred_path = "../task_data/fake_localization/baselines"
     gt_path = "../task_data/masks/bbox_masks_testing"
-    context_data_path = "../task_data/fake_localization/context_data.csv"
     out_of_context_path = "../task_data/fake_localization/context_objects_prediction/out_of_context_results.csv"
     all_masks_path = "../task_data/fake_localization/all_masks"
     methods = ['CAT-Net', 'ManTraNet', 'Trufor', "PSCC-Net"]
@@ -341,7 +333,6 @@ if __name__ == "__main__":
         methods, 
         base_pred_path, 
         gt_path,
-        context_data_path,
         out_of_context_path,
         all_masks_path,
         enhancement_factor=args.gamma

@@ -291,14 +291,12 @@ def test_all_models(args):
         }
         
         # print the result
-        print(f"\nResults for model trained with best {model_name}:")
-        print(f"Test Accuracy: {metrics['accuracy']:.2f}%")
-        print(f"Test Precision: {metrics['precision']:.2f}%")
-        print(f"Test Recall: {metrics['recall']:.2f}%")
-        print(f"Test F1 Score: {metrics['f1']:.2f}%")
-        print("\nConfusion Matrix:")
-        print(f"TN: {metrics['tn']}, FP: {metrics['fp']}")
-        print(f"FN: {metrics['fn']}, TP: {metrics['tp']}")
+        if model_name == "accuracy":
+            print(f"\nResults for model trained with best {model_name}:")
+            print(f"Test Accuracy: {metrics['accuracy']:.2f}%")
+            print(f"Test Precision: {metrics['precision']:.2f}%")
+            print(f"Test Recall: {metrics['recall']:.2f}%")
+            print(f"Test F1 Score: {metrics['f1']:.2f}%")
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     results_file = os.path.join(results_dir, f'test_results_{args.model}_{args.data_source}_{timestamp}.json')
@@ -319,12 +317,6 @@ def test_all_models(args):
             'value': best_model[1]['metrics'][metric]
         }
     
-    print("\n=== Final Summary ===")
-    print(f"Model type: {args.model}, Data source: {args.data_source}")
-    print("Best model for each metric on test set:")
-    for metric, info in best_models.items():
-        print(f"{metric.upper()}: {info['value']:.2f}% (Model: {info['model']})")
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test all saved best models.")
     parser.add_argument('--device', type=int, default=0,
