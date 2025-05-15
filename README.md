@@ -44,7 +44,7 @@ We recommend setting up a conda environment for full compatibility.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/COinCO.git
+git clone https://github.com/YangTianze009/COinCO.git
 cd COinCO
 ```
 ### 2. Create and activate a conda environment
@@ -159,7 +159,7 @@ python train.py --device {device_id} --data_source {data_source} --model {model_
 |----------------|--------|-------------|-----------------------------------------------------------------------------|
 | `--device`     | `int`  | `0`         | GPU device ID to use (e.g., 0, 1, 2, ...)                                  |
 | `--data_source`| `str`  | `balanced`  | Choose the data source:                                                    |
-|                |        |             | • `balanced`: Equal number of in-context and out-of-context samples (supplemented with COCO images) |
+|                |        |             | • `balanced`(Default): Equal number of in-context and out-of-context samples (supplemented with COCO images) |
 |                |        |             | • `inpainting_only`: Use only inpainted images from COinCO                 |
 | `--model`      | `str`  | `semantic`  | Choose the model type:                                                     |
 |                |        |             | • `semantic`: Uses semantic (textual) features only                        |
@@ -179,7 +179,7 @@ python test.py --device {device_id} --data_source {data_source} --model {model_t
 Same as training:
 
 - `--device`: GPU device ID
-- `--data_source`: Either `balanced` or `inpainting_only`
+- `--data_source`: Either `balanced` or `inpainting_only`, we use `balanced` results in our paper
 - `--model`: `semantic`, `visual`, or `combine`
 
 > 📝 **Note:**  
