@@ -60,25 +60,24 @@ class CachedEmbeddingDataset(Dataset):
 def prepare_test_embeddings(args, test_df, objects_df, device, embedding_dir):
     """Prepare and cache VAE and BERT embeddings for test data if they don't exist"""
     os.makedirs(embedding_dir, exist_ok=True)
-    
-    # Initialize BERT model for text embeddings
-    print("Loading BERT model for text embeddings...")
-    tokenizer = BertTokenizer.from_pretrained('/data2/Tianze/weights/bert-base-uncased')
-    bert_model = BertModel.from_pretrained('/data2/Tianze/weights/bert-base-uncased').to(device)
-    bert_model.eval()
-    
-    # Check which embeddings need to be created
+        # Check which embeddings need to be created
     missing_indices = []
     for coco_idx in test_df['coco_index']:
         file_path = os.path.join(embedding_dir, f"{coco_idx}.pt")
         if not os.path.exists(file_path):
             missing_indices.append(coco_idx)
-    
+
     if not missing_indices:
         print(f"All embeddings exist for this dataset, skipping encoding...")
         return
     
     print(f"Found {len(missing_indices)} missing embeddings. Processing...")
+
+    # Initialize BERT model for text embeddings
+    print("Loading BERT model for text embeddings...")
+    tokenizer = BertTokenizer.from_pretrained('/data2/Tianze/weights/bert-base-uncased')
+    bert_model = BertModel.from_pretrained('/data2/Tianze/weights/bert-base-uncased').to(device)
+    bert_model.eval()
     
     # Initialize VAE model for image embeddings, choose your own path
     model_id = "/data2/Tianze/weights/stable-diffusion-2-1"
