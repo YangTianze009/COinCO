@@ -343,6 +343,6 @@ This project is licensed under the Apache License 2.0. See the [LICENSE](./LICEN
 @misc{yang2025coinco,
   title={Common Inpainted Objects In-N-Out of Context},
   author={Tianze Yang and Tyson Jordan and Ninghao Liu and Jin Sun},
-  year={2025},
+  year={2025}
 }
 ```
