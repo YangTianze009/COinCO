@@ -1,6 +1,6 @@
 # COinCO: Common Inpainted Objects In-N-Out of Context
 
-**Authors:** Tianze Yang\*, Tyson Jordan\*, Ninghao Liu, Jin Sun  
+**Authors:** Tianze Yang\*, Tyson Jordan\*, Ruitong Sun, Ninghao Liu, Jin Sun  
 \*Equal contribution  
 **Affiliation:** University of Georgia
 
@@ -11,8 +11,6 @@
 This repository supports the paper:
 
 **"Common Inpainted Objects In-N-Out of Context"**  
-_Submitted to NeurIPS 2025 Datasets and Benchmarks Track_  
-Status: Submission under review
 
 COinCO is a large-scale dataset derived from COCO, featuring 97,722 images with inpainted objects labeled as **in-context** or **out-of-context** using multimodal reasoning. This dataset enables three novel downstream tasks:
 
