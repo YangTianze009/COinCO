@@ -99,8 +99,6 @@ These external models are required for embedding extraction and context reasonin
 
 - **[Stable Diffusion 2.1 VAE](https://huggingface.co/stabilityai/stable-diffusion-2-1)** – for extracting image and mask latents.
 - **[BERT Base Uncased](https://huggingface.co/bert-base-uncased)** – for encoding semantic information.
-- **[Molmo-7B-D-0924](https://huggingface.co/allenai/Molmo-7B-D-0924)** – for multimodal reasoning during context prediction.
-
 ---
 
 ### 🧠 Our Checkpoints
