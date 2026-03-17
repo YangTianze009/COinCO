@@ -14,7 +14,7 @@ This repository supports the paper:
 
 COinCO is a large-scale dataset derived from COCO, featuring 97,722 images with inpainted objects labeled as **in-context** or **out-of-context** using multimodal reasoning. This dataset enables three novel downstream tasks:
 
-1. **In- and out-of-context classification**
+1. **Fine-grained In- and Out-of-Context Classification**
 2. **Objects-from-Context Prediction**
 3. **Context-empowered fake localization**
 
@@ -25,7 +25,6 @@ COinCO is a large-scale dataset derived from COCO, featuring 97,722 images with 
 ```text
 ├── Fine-grained_Context_Classification/  # Fine-grained context classification (SFT on VLMs)
 ├── checkpoints/                          # Pretrained model checkpoints
-├── context_prediction/                   # Code for context classification
 ├── fake_localization/                    # Code for fake localization
 ├── objects_from_context_prediction/      # Code for object suggestion task
 ├── task_data/                            # Data used in these tasks
