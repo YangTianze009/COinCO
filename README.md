@@ -23,14 +23,15 @@ COinCO is a large-scale dataset derived from COCO, featuring 97,722 images with 
 
 ##  📁 Repository Structure
 ```text
-├── checkpoints/                         # Pretrained model checkpoints
-├── context_prediction/                 # Code for context classification 
-├── fake_localization/                  # Code for fake localization
-├── objects_from_context_prediction/    # Code for object suggestion task
-├── task_data/                          # Data used in these tasks
-├── requirements.txt                    # Pip environment file
-├── environment.yaml                    # Conda environment file
-└── README.md                           # This file
+├── Fine-grained_Context_Classification/  # Fine-grained context classification (SFT on VLMs)
+├── checkpoints/                          # Pretrained model checkpoints
+├── context_prediction/                   # Code for context classification
+├── fake_localization/                    # Code for fake localization
+├── objects_from_context_prediction/      # Code for object suggestion task
+├── task_data/                            # Data used in these tasks
+├── requirements.txt                      # Pip environment file
+├── environment.yaml                      # Conda environment file
+└── README.md                             # This file
 ```
 
 ---
@@ -125,64 +126,63 @@ and replace the `checkpoints/` folder
 ---
 
 ## 🚀 Downstream Tasks
-### 🔍 1. In- and out-of-context classification
-This folder contains the code for training and evaluating models that classify whether an object in a scene is **in-context** or **out-of-context**.
+### 🔍 1. Fine-grained In- and Out-of-Context Classification
 
-####  1.1 Getting Started
+This module fine-tunes **Qwen2.5-VL-3B-Instruct** with LoRA to detect out-of-context objects in images using three fine-grained contextual criteria:
 
-First, navigate to the context prediction folder:
+- **Co-occurrence**: Whether the object commonly appears together with other objects in the scene
+- **Location**: Whether the object is placed in a physically and contextually reasonable position
+- **Size**: Whether the object's size is appropriate relative to other objects and the scene
 
-```bash
-cd context_prediction
-```
-####  1.2 Files
+Training data is generated through a multi-model consensus pipeline using three large VLMs (InternVL, Molmo, Qwen), where only samples agreed upon by all models are used for supervised fine-tuning.
 
-- `train.py`: Train the context classification model
-- `test.py`: Evaluate the model on the  test set
-- `model.py`: Model structure for semantic, visual, and combined input types
-- `dataset.py`: Dataset loader for different data sources
-- `logs/`: Stores training logs
-- `test_results/`: Stores model prediction results on test set
+#### 1.1 Getting Started
 
-####  1.3 Training
-To train a model, run:
+Navigate to the fine-grained classification folder:
 
 ```bash
-python train.py --device {device_id} --data_source {data_source} --model {model_type}
+cd Fine-grained_Context_Classification
 ```
 
-####  Arguments
+#### 1.2 Pipeline Overview
 
-| Argument       | Type   | Default     | Description                                                                 |
-|----------------|--------|-------------|-----------------------------------------------------------------------------|
-| `--device`     | `int`  | `0`         | GPU device ID to use (e.g., 0, 1, 2, ...)                                  |
-| `--data_source`| `str`  | `balanced`  | Choose the data source:                                                    |
-|                |        |             | • `balanced`(Default): Equal number of in-context and out-of-context samples (supplemented with COCO images) |
-|                |        |             | • `inpainting_only`: Use only inpainted images from COinCO                 |
-| `--model`      | `str`  | `semantic`  | Choose the model type:                                                     |
-|                |        |             | • `semantic`: Uses semantic (textual) features only                        |
-|                |        |             | • `visual`: Uses visual features only                                      |
-|                |        |             | • `combine`: Uses both visual and semantic features                        |
+The full pipeline consists of six steps:
 
----
+| Step | Description | Scripts |
+|------|-------------|---------|
+| 1 | **Data Generation** — Run three VLMs on inpainted images to generate context reasoning labels | `data_generation/context_reasoning_*.py` |
+| 2 | **Build WebDatasets** — Convert agreed samples into WebDataset format for training | `data_generation/context_reasoning-res/SFT_data/*.ipynb` |
+| 3 | **Prepare Cached Datasets** — Create train/eval/test splits from WebDatasets | `{co_occurrence,location,size}/prepare_dataset.ipynb` |
+| 4 | **Fine-Tune** — LoRA fine-tuning on Qwen2.5-VL-3B with Accelerate (multi-GPU) | `{co_occurrence,location,size}/train/launch_training.sh` |
+| 5 | **Evaluate on Inpainted Images** — Test baseline vs. fine-tuned models | `{co_occurrence,location,size}/eval_inpainted_*/parallel_inference.py` |
+| 6 | **Shortcut Learning Test** — Evaluate on real COCO images to detect shortcut learning | `{co_occurrence,location,size}/eval_real_coco/inference_*.py` |
 
-####  1.4 Inference / Testing
+#### 1.3 Pre-trained Models & Data
 
-To evaluate a trained model on the test set:
+Pre-trained LoRA adapters and pre-generated context reasoning data are available on HuggingFace, so you can skip Steps 1-4 and go directly to evaluation:
+
+| Resource | Link |
+|----------|------|
+| Pre-trained LoRA Adapters | [COinCO/Context_Classification_Models](https://huggingface.co/COinCO/Context_Classification_Models) |
+| Context Reasoning CSVs | [COinCO/COinCO-dataset/context_reasoning](https://huggingface.co/datasets/COinCO/COinCO-dataset/tree/main/context_reasoning) |
+| CSV Mappings | [COinCO/COinCO-dataset/inpainting_info](https://huggingface.co/datasets/COinCO/COinCO-dataset/tree/main/inpainting_info) |
+
+#### 1.4 Evaluation
 
 ```bash
-python test.py --device {device_id} --data_source {data_source} --model {model_type}
+# Evaluate on inpainted test set (baseline vs. fine-tuned)
+python co_occurrence/eval_inpainted_test_set/baseline/parallel_inference.py
+python co_occurrence/eval_inpainted_test_set/finetuned/parallel_inference.py
+# Repeat for location/ and size/
+
+# Shortcut learning test on real COCO images
+python co_occurrence/eval_real_coco/inference_baseline.py
+python co_occurrence/eval_real_coco/inference_finetuned.py
+# Repeat for location/ and size/
 ```
-#### Arguments
-Same as training:
 
-- `--device`: GPU device ID
-- `--data_source`: Either `balanced` or `inpainting_only`, we use `balanced` results in our paper
-- `--model`: `semantic`, `visual`, or `combine`
-
-> 📝 **Note:**  
-> The test set is already balanced (1:1 ratio of in-context and out-of-context samples).  
-> Evaluation is consistent across all model types and data sources.
+> 📝 **Note:**
+> See [`Fine-grained_Context_Classification/README.md`](Fine-grained_Context_Classification/README.md) for detailed setup, configuration, and step-by-step instructions.
 
 ---
 ### 🔍 2. Objects-from-Context prediction
