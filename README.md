@@ -1,10 +1,12 @@
 # COinCO: Common Inpainted Objects In-N-Out of Context
 
-**Authors:** Tianze Yang\*, Tyson Jordan\*, Ruitong Sun\*, Ninghao Liu, Jin Sun  
-\*Equal contribution  
-**Affiliation:** University of Georgia
+**Authors:** Tianze Yang<sup>1*</sup>, Tyson Jordan<sup>1*</sup>, Ruitong Sun<sup>1*</sup>, Ninghao Liu<sup>2</sup>, Jin Sun<sup>1</sup>  
 
----
+\*Equal contribution  
+
+**Affiliations:**  
+<sup>1</sup> University of Georgia  
+<sup>2</sup> The Hong Kong Polytechnic University
 
 ## 🌐 Project Overview
 
